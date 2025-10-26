@@ -150,16 +150,16 @@ class RoundRobinPatientList:
 if __name__ == "__main__":
     rr_patients = RoundRobinPatientList()
 
-    rr_patients.add_patient("Jinnie", 30, 101, priority=2)
-    rr_patients.add_patient("Alekya", 25, 102, priority=1)
-    rr_patients.add_patient("Bobbie", 40, 103, priority=3)
-    rr_patients.add_patient("Charlie", 29, 104, priority=2)
+    rr_patients.add_patient("Soumya", 25, 111, priority=2)
+    rr_patients.add_patient("Anjali", 35, 112, priority=1)
+    rr_patients.add_patient("Sahithi", 40, 113, priority=3)
+    rr_patients.add_patient("siri", 29, 114, priority=2)
 
     rr_patients.show_patients()
 
-    rr_patients.update_patient(103, name="Bobbie Singh", age=41)
+    rr_patients.update_patient(113, name=" Sai Sahithi", age=42)
 
-    rr_patients.remove_patient(102)
+    rr_patients.remove_patient(112)
     rr_patients.show_patients()
 
     print(f"👥 Total patients: {rr_patients.count_patients()}")
