@@ -1,0 +1,167 @@
+class PatientNode:
+    def __init__(self, patient_name, patient_age, patient_id, priority=1):
+        self.patient_name = patient_name
+        self.patient_age = patient_age
+        self.patient_id = patient_id
+        self.priority = priority
+        self.next_node = None
+
+    def __repr__(self):
+        return f"[{self.patient_id}] {self.patient_name} (Age: {self.patient_age}, Priority: {self.priority})"
+
+
+class RoundRobinPatientList:
+    def __init__(self):
+        self.start_node = None
+
+    # ----------------------- ADD PATIENT -----------------------
+    def add_patient(self, patient_name, patient_age, patient_id, priority=1):
+        # Prevent duplicate IDs
+        if self.find_patient(patient_id):
+            print(f"⚠️ Patient with ID {patient_id} already exists. Not added.")
+            return
+
+        new_patient = PatientNode(patient_name, patient_age, patient_id, priority)
+
+        if not self.start_node:
+            self.start_node = new_patient
+            new_patient.next_node = self.start_node
+            print(f"✅ {new_patient} added as the first patient.")
+        else:
+            current = self.start_node
+            while current.next_node != self.start_node:
+                current = current.next_node
+            current.next_node = new_patient
+            new_patient.next_node = self.start_node
+            print(f"✅ {new_patient} added to the list.")
+
+    # ----------------------- FIND PATIENT -----------------------
+    def find_patient(self, patient_id):
+        if not self.start_node:
+            return None
+
+        current = self.start_node
+        while True:
+            if current.patient_id == patient_id:
+                return current
+            current = current.next_node
+            if current == self.start_node:
+                break
+        return None
+
+    # ----------------------- REMOVE PATIENT -----------------------
+    def remove_patient(self, patient_id):
+        if not self.start_node:
+            print("⚠️ No patients to delete.")
+            return
+
+        current = self.start_node
+        previous = None
+
+        while True:
+            if current.patient_id == patient_id:
+                if previous is None:
+                    # Removing the head node
+                    if current.next_node == self.start_node:
+                        self.start_node = None
+                    else:
+                        tail = self.start_node
+                        while tail.next_node != self.start_node:
+                            tail = tail.next_node
+                        self.start_node = current.next_node
+                        tail.next_node = self.start_node
+                else:
+                    previous.next_node = current.next_node
+
+                print(f"🗑️ Removed: {current}")
+                return
+
+            previous = current
+            current = current.next_node
+            if current == self.start_node:
+                break
+
+        print(f"❌ Patient with ID {patient_id} not found.")
+
+    # ----------------------- UPDATE PATIENT -----------------------
+    def update_patient(self, patient_id, name=None, age=None, priority=None):
+        patient = self.find_patient(patient_id)
+        if not patient:
+            print(f"❌ No patient found with ID {patient_id}.")
+            return
+
+        if name:
+            patient.patient_name = name
+        if age:
+            patient.patient_age = age
+        if priority:
+            patient.priority = priority
+
+        print(f"🩺 Updated patient: {patient}")
+
+    # ----------------------- SHOW PATIENTS -----------------------
+    def show_patients(self):
+        if not self.start_node:
+            print("⚠️ No patients in the list.")
+            return
+
+        print("\n👩‍⚕️ Current Round-Robin Patient List:")
+        print("─────────────────────────────────────────────")
+        current = self.start_node
+        while True:
+            print(f"→ {current}")
+            current = current.next_node
+            if current == self.start_node:
+                break
+        print("─────────────────────────────────────────────")
+
+    # ----------------------- COUNT PATIENTS -----------------------
+    def count_patients(self):
+        if not self.start_node:
+            return 0
+        count = 0
+        current = self.start_node
+        while True:
+            count += 1
+            current = current.next_node
+            if current == self.start_node:
+                break
+        return count
+
+    # ----------------------- SIMULATE ROUND ROBIN -----------------------
+    def simulate_round_robin(self, cycles=2):
+        if not self.start_node:
+            print("⚠️ No patients to simulate.")
+            return
+
+        print(f"\n🕒 Starting round-robin simulation for {cycles} cycles...")
+        current = self.start_node
+
+        for round_num in range(1, cycles + 1):
+            print(f"\n--- 🌀 Round {round_num} ---")
+            for _ in range(self.count_patients()):
+                print(f"👩‍⚕️ Treating patient: {current}")
+                current = current.next_node
+
+        print("\n✅ Round-robin simulation complete!")
+
+
+# ----------------------- EXAMPLE USAGE -----------------------
+if __name__ == "__main__":
+    rr_patients = RoundRobinPatientList()
+
+    rr_patients.add_patient("Jinnie", 30, 101, priority=2)
+    rr_patients.add_patient("Alekya", 25, 102, priority=1)
+    rr_patients.add_patient("Bobbie", 40, 103, priority=3)
+    rr_patients.add_patient("Charlie", 29, 104, priority=2)
+
+    rr_patients.show_patients()
+
+    rr_patients.update_patient(103, name="Bobbie Singh", age=41)
+
+    rr_patients.remove_patient(102)
+    rr_patients.show_patients()
+
+    print(f"👥 Total patients: {rr_patients.count_patients()}")
+
+    rr_patients.simulate_round_robin(cycles=3)
